@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+//Creates Home component and receives setView as prop.
 export function Home({ setView }) {
   return (
     <div className="app-container">
@@ -9,14 +10,15 @@ export function Home({ setView }) {
           <span>COLLEGE COMPLAINT SYSTEM</span>
         </div>
         <div className="nav-links">
-          <button onClick={() => setView('admin-login')} className="nav-btn nav-btn-admin">Admin Access</button>
+          
+          <button onClick={() => setView('admin-login')} className="nav-btn nav-btn-admin">Admin Access</button> 
           <button onClick={() => setView('login')} className="nav-btn nav-btn-student">Student Sign In</button>
         </div>
       </nav>
 
       <div className="hero-v2">
         <div className="hero-overlay"></div>
-        <div className="hero-content-v2">
+        <div className="hero-content-v2"> 
           <span className="badge-v2">Student Administration Portal</span>
           <h1 className="hero-title-v2">College Complaint Management System</h1>
           <p className="hero-subtitle-v2">
@@ -38,9 +40,9 @@ export function Home({ setView }) {
 }
 
 export function Login({ handleLogin, setView }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState(''); //Creates state variable for student name.
+  const [email, setEmail] = useState(''); //Stores email input.
+  const [password, setPassword] = useState(''); //Stores password input.
 
   return (
     <div className="center-container">

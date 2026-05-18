@@ -6,61 +6,74 @@ import AdminDashboard from './AdminDashboard';
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
-  const initialUser = JSON.parse(localStorage.getItem('currentUser_v2')) || null;
-  const [user, setUser] = useState(initialUser);
-  const [view, setView] = useState(initialUser ? 'dashboard' : 'home');
-  const [users, setUsers] = useState(JSON.parse(localStorage.getItem('allUsers_v2')) || []);
-  const [complaints, setComplaints] = useState([]);
+  const savedStudent = JSON.parse(localStorage.getItem('currentStudent')) || null;//Checks if user already logged in.
+  const [user, setUser] = useState(savedStudent); //user stores logged in user information.
+  const [view, setView] = useState(savedStudent ? 'dashboard' : 'home'); //This controls which page should be displayed. If user already exists → dashboard page opens.
+  const [users, setUsers] = useState(JSON.parse(localStorage.getItem('allUsers')) || []); //This stores all registered users.
+  
+  const savedComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
+  const [complaints, setComplaints] = useState(savedComplaints); //This stores all complaints submitted in the system.
 
   useEffect(() => {
-    localStorage.setItem('currentUser_v2', JSON.stringify(user));
+    localStorage.setItem('currentStudent', JSON.stringify(user)); //Whenever the user state changes: Data is saved into localStorage.The dependency array [user] means this effect runs whenever user changes.
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('allUsers_v2', JSON.stringify(users));
+    localStorage.setItem('allUsers', JSON.stringify(users)); //Whenever users state changes, updated users data is stored in localStorage.
   }, [users]);
 
   useEffect(() => {
-    localStorage.setItem('complaints_v2', JSON.stringify(complaints));
+    localStorage.setItem('complaints', JSON.stringify(complaints)); //Whenever complaint data changes, it is saved permanently in localStorage.
   }, [complaints]);
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'complaints') {
+        setComplaints(JSON.parse(e.newValue) || []);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleLogin = (name, email, role) => {
     const userData = { id: uuidv4(), name, email, role };
-    setUser(userData);
-    setView('dashboard');
+    setUser(userData);    //stores user inofration into state 
+    setView('dashboard');  //after login user is redirected to dashboard page
   };
 
   const handleLogout = () => {
-    setUser(null);
-    setView('home');
+    setUser(null);  //removes current user
+    setView('home'); //redirects user to home page 
   };
 
   const addComplaint = (complaint) => {
     const newComplaint = {
       ...complaint,
-      id: uuidv4(),
+      id: uuidv4(), //cretaes unique complaint id
       studentEmail: user.email,
       studentName: user.name,
-      status: 'Pending',
-      date: new Date().toLocaleDateString(),
+      status: 'Pending', //new complaintes are marked intially as pending
+      date: new Date().toLocaleDateString(), 
     };
-    setComplaints([newComplaint, ...complaints]);
+    setComplaints([newComplaint, ...complaints]);  //Adds new complaint at beginning of complaints array.
   };
 
   const updateComplaintStatus = (id, newStatus) => {
-    setComplaints(complaints.map(c => c.id === id ? { ...c, status: newStatus } : c));
+    setComplaints(complaints.map(c => c.id === id ? { ...c, status: newStatus } : c)); //Matching complaint gets updated. Others remain unchanged.
   };
 
+  //This function decides which page should be displayed.
   const renderView = () => {
     switch (view) {
       case 'home':
         return <Home setView={setView} />;
       case 'login':
-        return <Login handleLogin={handleLogin} setView={setView} />;
+        return <Login handleLogin={handleLogin} setView={setView} />; //Displays Login page and passes functions as props.
       case 'admin-login':
         return <AdminLogin handleLogin={handleLogin} setView={setView} />;
       case 'dashboard':
-        return user?.role === 'admin'
+        return user?.role === 'admin' //Displays dashboard depending on user role.
           ? <AdminDashboard complaints={complaints} updateStatus={updateComplaintStatus} logout={handleLogout} />
           : <StudentDashboard user={user} complaints={complaints.filter(c => c.studentEmail === user.email)} addComplaint={addComplaint} logout={handleLogout} setView={setView} />;
       case 'add-complaint':
@@ -69,7 +82,8 @@ export default function App() {
         return <Home setView={setView} />;
     }
   };
-
+  
+  //Displays the selected page inside main container.
   return (
     <div className="app-container">
       {renderView()}

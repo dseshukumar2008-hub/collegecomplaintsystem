@@ -3,18 +3,19 @@ import Sidebar from './Sidebar';
 import ComplaintModal from './ComplaintModal';
 
 export default function StudentDashboard({ user, complaints, addComplaint, logout, setView }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); //Controls whether complaint modal is visible or hidden.
   const [formData, setFormData] = useState({ title: '', category: 'General', description: '' });
 
   const total = complaints.length;
-  const pending = complaints.filter(c => c.status === 'Pending').length;
-  const resolved = complaints.filter(c => c.status === 'Resolved').length;
-
+  const pending = complaints.filter(c => c.status === 'Pending').length; //Counts pending complaints.
+  const resolved = complaints.filter(c => c.status === 'Resolved').length; //Counts resolved complaints.
+  
+  //Handles complaint form submission.
   const handleSubmit = (e) => {
     e.preventDefault();
-    addComplaint(formData);
+    addComplaint(formData); //Sends complaint data to App component.
     setFormData({ title: '', category: 'General', description: '' });
-    setShowModal(false);
+    setShowModal(false); //Closes complaint modal.
   };
 
   return (
