@@ -70,12 +70,7 @@ export default function Sidebar({ user, role, logout, setView, setShowModal }) {
       </ul>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-section-label" onClick={() => {
-          const el = document.body;
-          el.classList.toggle('dark-mode');
-        }} style={{ cursor: 'pointer', marginBottom: '15px' }}>
-          <span style={{ marginRight: '10px' }}>🌙</span> Toggle Theme
-        </div>
+
         <div className="sidebar-nav-item" onClick={logout}>
           <span className="sidebar-nav-icon">↩</span>
           <span className="sidebar-nav-label">Sign Out</span>
